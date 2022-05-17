@@ -18,7 +18,7 @@ impl Handler {
     pub fn handle(&self, args: Cli) -> Result<(), Box<dyn std::error::Error>> {
         let cur_date_time = self.time.cur_date_time(DATE_FORMAT_STR);
         let command = args.command;
-        let (relative_name, content) = command.build_yaml(&cur_date_time, &args.channel);
+        let (relative_name, content) = command.build_yaml(&cur_date_time);
         let root_directory = args.root_directory;
         let squad = args.squad;
 
@@ -42,10 +42,10 @@ mod tests {
     fn must_call_writer_properly() -> Result<(), Box<dyn std::error::Error>> {
         const EXP_FORMAT: &'static str = "%d%m%Y-%H%M%S";
         let envs = vec![Env::India, Env::Ext];
-        let download_command = Some(SQSCommand::Download { queue: String::from("") });
+        let channel = String::from("channel");
+        let download_command = Some(SQSCommand::Download { queue: String::from(""), channel });
         let sqs_command = SQS { command: download_command };
         let args = Cli {
-            channel: String::from("channel"),
             squad: String::from("my-squad"),
             envs,
             root_directory: String::from("root_dir"),
