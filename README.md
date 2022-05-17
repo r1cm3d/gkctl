@@ -7,6 +7,9 @@
 
 ## Prerequisites
 [![rust](https://img.shields.io/badge/rust-2021-orange?style=flat-square)](https://github.com/rust-lang/rust)
+``` console
+brew install rustup && rustup-init
+```
 
 ## Table of Contents
 * [TL;DR](#ppsch)
@@ -38,24 +41,44 @@ write in this directory.
 It is worth to keep most used commands in aliases as follows:
 ``` console
 # Reprocess Clearing
-alias repcleit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs reprocess  --src-queue "NetworkAuthorizationsClearing-dead-letter" --dst-queue NetworkAuthorizationsClearing'
-alias repclemt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs reprocess  --src-queue "NetworkAuthorizationsClearing-dead-letter" --dst-queue NetworkAuthorizationsClearing'
-alias repcleboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs reprocess  --src-queue "NetworkAuthorizationsClearing-dead-letter" --dst-queue NetworkAuthorizationsClearing'
+alias repcleit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs reprocess  --channel C01QQ11RECT --src-queue "NetworkAuthorizationsClearing-dead-letter" --dst-queue NetworkAuthorizationsClearing'
+alias repclemt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs reprocess  --channel C01QQ11RECT --src-queue "NetworkAuthorizationsClearing-dead-letter" --dst-queue NetworkAuthorizationsClearing'
+alias repcleboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs reprocess  --channel C01QQ11RECT --src-queue "NetworkAuthorizationsClearing-dead-letter" --dst-queue NetworkAuthorizationsClearing'
 
 # Download clearing
-alias dowcleit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs download --queue "NetworkAuthorizationsClearing-dead-letter"'
-alias dowclemt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs download --queue "NetworkAuthorizationsClearing-dead-letter"'
-alias dowcleboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs download --queue "NetworkAuthorizationsClearing-dead-letter"'
+alias dowcleit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "NetworkAuthorizationsClearing-dead-letter"'
+alias dowclemt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "NetworkAuthorizationsClearing-dead-letter"'
+alias dowcleboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "NetworkAuthorizationsClearing-dead-letter"'
 
 # Reprocess Ledger
-alias repledt='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs reprocess  --src-queue "NetworkAuthorizationsLedgerIntegrity-dead-letter" --dst-queue NetworkAuthorizationsLedgerIntegrity'
-alias repledmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs reprocess  --src-queue "NetworkAuthorizationsLedgerIntegrity-dead-letter" --dst-queue NetworkAuthorizationsLedgerIntegrity'
-alias repledboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs reprocess  --src-queue "NetworkAuthorizationsLedgerIntegrity-dead-letter" --dst-queue NetworkAuthorizationsLedgerIntegrity'
+alias repledt='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs reprocess  --channel C01QQ11RECT --src-queue "NetworkAuthorizationsLedgerIntegrity-dead-letter" --dst-queue NetworkAuthorizationsLedgerIntegrity'
+alias repledmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs reprocess  --channel C01QQ11RECT --src-queue "NetworkAuthorizationsLedgerIntegrity-dead-letter" --dst-queue NetworkAuthorizationsLedgerIntegrity'
+alias repledboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs reprocess  --channel C01QQ11RECT --src-queue "NetworkAuthorizationsLedgerIntegrity-dead-letter" --dst-queue NetworkAuthorizationsLedgerIntegrity'
 
 # Download Ledger
-alias dowledit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs download --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
-alias dowledmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs download --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
-alias dowledboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" --channel C01QQ11RECT sqs download --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+alias dowledit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+alias dowledmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+alias dowledboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+ 
+# Download Settlement Files 
+alias dowsetit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "ClearingBatchSettlementFiles-dead-letter"'
+alias dowsetmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "ClearingBatchSettlementFiles-dead-letter"'
+alias dowsetboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations" sqs download --channel C01QQ11RECT --queue "ClearingBatchSettlementFiles-dead-letter"'
+
+# Purge Settlement Files 
+alias pursetit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "ClearingBatchSettlementFiles-dead-letter"'
+alias pursetmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "ClearingBatchSettlementFiles-dead-letter"'
+alias pursetboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "ClearingBatchSettlementFiles-dead-letter"'
+
+# Purge Ledger 
+alias purledit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+alias purledmt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+alias purledboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "NetworkAuthorizationsLedgerIntegrity-dead-letter"'
+
+# Purge Clearing 
+alias purcleit='gk-yaml --envs itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "NetworkAuthorizationsClearing-dead-letter"'
+alias purclemt='gk-yaml --envs multitenant --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "NetworkAuthorizationsClearing-dead-letter"'
+alias purcleboth='gk-yaml --envs multitenant itau --root-directory "$PROJECTS/goalkeeper" --squad "pci-authorizations"  sqs purge --queue "NetworkAuthorizationsClearing-dead-letter"'
 ```
 
 If one want to reprocess Clearing DLQ for both environments I only have to type:
