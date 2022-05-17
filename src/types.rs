@@ -236,7 +236,7 @@ spec:
           arguments:
             artifacts:
             - name: file
-              from: "{{tasks.get-queue-url-json.outputs.artifacts.output}}"
+              from: "{{{{tasks.get-queue-url-json.outputs.artifacts.output}}}}"
             parameters: [
               {{ name: "cmd", value: '.QueueUrl'}}
             ]
@@ -247,7 +247,7 @@ spec:
             template: aws-cli
           arguments:
             parameters: [
-            {{ name: "cmd", value: 'aws sqs --region sa-east-1  purge-queue --queue-url {{tasks.get-queue-url.outputs.result}}'}}
+            {{ name: "cmd", value: 'aws sqs --region sa-east-1  purge-queue --queue-url {{{{tasks.get-queue-url.outputs.result}}}}'}}
             ]
     "#, cur_date_time, queue)
 }
@@ -340,52 +340,49 @@ spec:
                        r#"apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: 270422-082632-download
+  name: 270422-082632-purge
   namespace: goalkeeper
 spec:
-  entrypoint: wf-entrypoint
-  serviceAccountName: goalkeeper
-  activeDeadlineSeconds: 600
-  templates:
+    entrypoint: wf-entrypoint
+    serviceAccountName: goalkeeper
+    activeDeadlineSeconds: 600
+    templates:
     - name: wf-entrypoint
       dag:
         tasks:
-          - name: sqs
-            templateRef:
-              name: aws
-              template: queue-to-file-cli
-            arguments:
-              parameters: [
-                {{ name: "source", value: 'queue'}},
-                {{ name: "region", value: 'sa-east-1'}}
-              ]
-          - name: slack-send-file
-            dependencies: [sqs]
-            templateRef:
-              name: slack
-              template: slack-send-file
-            arguments:
-              artifacts:
-                - name: file
-                  from: "{{{{tasks.sqs.outputs.artifacts.output}}}}"
-              parameters: [
-                {{
-                  name: "message",
-                  value: "Task {{{{workflow.name}}}}"
-                }},
-                {{
-                  name: "filename",
-                  value: "270422-082632-download.json.gz"
-                }},
-                {{
-                  name: "channel",
-                  value: "slackChannel"
-                }}
-              ]
+        - name: get-queue-url-json
+          templateRef:
+            name: aws
+            template: aws-cli
+          arguments:
+            parameters: [
+              {{ name: "cmd", value: 'aws sqs --region sa-east-1  get-queue-url --queue-name queue'}}
+            ]
+        - name: get-queue-url
+          dependencies: [get-queue-url-json]
+          templateRef:
+            name: utils
+            template: jq
+          arguments:
+            artifacts:
+            - name: file
+              from: "{{{{tasks.get-queue-url-json.outputs.artifacts.output}}}}"
+            parameters: [
+              {{ name: "cmd", value: '.QueueUrl'}}
+            ]
+        - name: purge
+          dependencies: [get-queue-url]
+          templateRef:
+            name: aws
+            template: aws-cli
+          arguments:
+            parameters: [
+            {{ name: "cmd", value: 'aws sqs --region sa-east-1  purge-queue --queue-url {{{{tasks.get-queue-url.outputs.result}}}}'}}
+            ]
     "#)));
         let cur_date_time = String::from("270422-082632");
         let queue = String::from("queue");
-        let reprocess_command = Some(SQSCommand::Purge{ queue });
+        let reprocess_command = Some(SQSCommand::Purge { queue });
         let sqs_command = SQS { command: reprocess_command };
 
         let cli = Cli {
