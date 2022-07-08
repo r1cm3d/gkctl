@@ -3,6 +3,12 @@ use mockall::automock;
 
 use clap::{Args, Parser, Subcommand, ArgEnum};
 
+use handlebars::Handlebars;
+
+//use serde_json::json;
+
+use std::collections::HashMap;
+
 #[cfg_attr(test, automock)]
 pub trait Writer {
     fn write(&self, file_name: &str, content: &str) -> Option<Box<dyn std::error::Error>>;
@@ -156,53 +162,25 @@ spec:
 }
 
 fn build_reprocess_yaml(cur_date_time: &str, channel: &str, src_queue: &str, dst_queue: &str) -> String {
-    format!(
-        r#"apiVersion: argoproj.io/v1alpha1
-kind: Workflow
-metadata:
-  name: {}-reprocess
-  namespace: goalkeeper
-spec:
-  entrypoint: wf-entrypoint
-  serviceAccountName: goalkeeper
-  templates:
-    - name: wf-entrypoint
-      dag:
-        tasks:
-          - name: sqs
-            templateRef:
-              name: aws
-              template: dlq-to-queue
-            arguments:
-              parameters:
-                [
-                  {{
-                    name: "source",
-                    value: "{}",
-                  }},
-                  {{
-                    name: "destination",
-                    value: "{}",
-                  }},
-                  {{ name: "region", value: "sa-east-1" }},
-                  {{ name: "batch", value: 1 }},
-                ]
-          - name: slack-send-file
-            dependencies: [sqs]
-            templateRef:
-              name: slack
-              template: slack-send-file
-            arguments:
-              artifacts:
-                - name: file
-                  from: "{{{{tasks.sqs.outputs.artifacts.output}}}}"
-              parameters:
-                [
-                  {{ name: "message", value: "Task {{{{workflow.name}}}}" }},
-                  {{ name: "filename", value: "logs.txt" }},
-                  {{ name: "channel", value: "{}" }},
-                ]
-    "#, cur_date_time, src_queue, dst_queue, channel)
+    let mut handlebars = Handlebars::new();
+    //handlebars.set_strict_mode(true);
+
+    handlebars
+        .register_template_string("build_reprocess", include_str!("templates/build_reprocess.hbs"))
+        .unwrap();
+
+    let mut data = HashMap::new();
+    data.insert("cur_date_time", &cur_date_time);
+    data.insert("channel", &channel);
+    data.insert("src_queue", &src_queue);
+    data.insert("dst_queue", &dst_queue);
+
+    let r = handlebars
+        .render("build_reprocess", &data)
+        .unwrap();
+
+    r
+    
 }
 
 fn build_purge_yaml(cur_date_time: &str, queue: &str) -> String {
@@ -446,7 +424,8 @@ spec:
                   {{ name: "filename", value: "logs.txt" }},
                   {{ name: "channel", value: "slackChannel" }},
                 ]
-    "#)));
+
+"#)));
         let cur_date_time = String::from("270422-082632");
         let src_queue = String::from("src");
         let dst_queue = String::from("dst");

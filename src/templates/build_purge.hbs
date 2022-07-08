@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: {}-purge
+  namespace: goalkeeper
+spec:
+    entrypoint: wf-entrypoint
+    serviceAccountName: goalkeeper
+    activeDeadlineSeconds: 600
+    templates:
+    - name: wf-entrypoint
+      dag:
+        tasks:
+        - name: get-queue-url-json
+          templateRef:
+            name: aws
+            template: aws-cli
+          arguments:
+            parameters: [
+              {{ name: "cmd", value: 'aws sqs --region sa-east-1  get-queue-url --queue-name {}'}}
+            ]
+        - name: get-queue-url
+          dependencies: [get-queue-url-json]
+          templateRef:
+            name: utils
+            template: jq
+          arguments:
+            artifacts:
+            - name: file
+              from: "{{{{tasks.get-queue-url-json.outputs.artifacts.output}}}}"
+            parameters: [
+              {{ name: "cmd", value: '.QueueUrl'}}
+            ]
+        - name: purge
+          dependencies: [get-queue-url]
+          templateRef:
+            name: aws
+            template: aws-cli
+          arguments:
+            parameters: [
+            {{ name: "cmd", value: 'aws sqs --region sa-east-1  purge-queue --queue-url {{{{tasks.get-queue-url.outputs.result}}}}'}}
+            ]
+

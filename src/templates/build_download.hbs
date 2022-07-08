@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: {}-download
+  namespace: goalkeeper
+spec:
+  entrypoint: wf-entrypoint
+  serviceAccountName: goalkeeper
+  activeDeadlineSeconds: 600
+  templates:
+    - name: wf-entrypoint
+      dag:
+        tasks:
+          - name: sqs
+            templateRef:
+              name: aws
+              template: queue-to-file-cli
+            arguments:
+              parameters: [
+                {{ name: "source", value: '{}'}},
+                {{ name: "region", value: 'sa-east-1'}}
+              ]
+          - name: slack-send-file
+            dependencies: [sqs]
+            templateRef:
+              name: slack
+              template: slack-send-file
+            arguments:
+              artifacts:
+                - name: file
+                  from: "{{{{tasks.sqs.outputs.artifacts.output}}}}"
+              parameters: [
+                {{
+                  name: "message",
+                  value: "Task {{{{workflow.name}}}}"
+                }},
+                {{
+                  name: "filename",
+                  value: "{}-download.json.gz"
+                }},
+                {{
+                  name: "channel",
+                  value: "{}"
+                }}
+              ]
+    
