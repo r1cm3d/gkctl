@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: {{cur_date_time}}-reprocess
+  namespace: goalkeeper
+spec:
+  entrypoint: wf-entrypoint
+  serviceAccountName: goalkeeper
+  templates:
+    - name: wf-entrypoint
+      dag:
+        tasks:
+          - name: sqs
+            templateRef:
+              name: aws
+              template: dlq-to-queue
+            arguments:
+              parameters:
+                [
+                  {
+                    name: "source",
+                    value: "{{src_queue}}",
+                  },
+                  {
+                    name: "destination",
+                    value: "{{dst_queue}}",
+                  },
+                  { name: "region", value: "sa-east-1" },
+                  { name: "batch", value: 1 },
+                ]
+          - name: slack-send-file
+            dependencies: [sqs]
+            templateRef:
+              name: slack
+              template: slack-send-file
+            arguments:
+              artifacts:
+                - name: file
+                  from: "\{{tasks.sqs.outputs.artifacts.output}}"
+              parameters:
+                [
+                  { name: "message", value: "Task \{{workflow.name}}" },
+                  { name: "filename", value: "logs.txt" },
+                  { name: "channel", value: "{{channel}}" },
+                ]
+
