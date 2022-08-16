@@ -111,7 +111,7 @@ fn build_download_yaml(cur_date_time: &str, channel: &str, queue: &str) -> Strin
 kind: Workflow
 metadata:
   name: {}-download
-  namespace: goalkeeper
+  namespace: goalkeeper-new
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
@@ -161,7 +161,7 @@ fn build_reprocess_yaml(cur_date_time: &str, channel: &str, src_queue: &str, dst
 kind: Workflow
 metadata:
   name: {}-reprocess
-  namespace: goalkeeper
+  namespace: goalkeeper-new
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
@@ -211,7 +211,7 @@ fn build_purge_yaml(cur_date_time: &str, queue: &str) -> String {
 kind: Workflow
 metadata:
   name: {}-purge
-  namespace: goalkeeper
+  namespace: goalkeeper-new
 spec:
     entrypoint: wf-entrypoint
     serviceAccountName: goalkeeper
@@ -272,7 +272,7 @@ mod tests {
 kind: Workflow
 metadata:
   name: 270422-082632-download
-  namespace: goalkeeper
+  namespace: goalkeeper-new
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
@@ -341,7 +341,7 @@ spec:
 kind: Workflow
 metadata:
   name: 270422-082632-purge
-  namespace: goalkeeper
+  namespace: goalkeeper-new
 spec:
     entrypoint: wf-entrypoint
     serviceAccountName: goalkeeper
@@ -405,7 +405,7 @@ spec:
 kind: Workflow
 metadata:
   name: 270422-082632-reprocess
-  namespace: goalkeeper
+  namespace: goalkeeper-new
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper

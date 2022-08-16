@@ -23,7 +23,8 @@ impl Handler {
         let squad = args.squad;
 
         for env in args.envs {
-            let path = format!("{}/tasks/{}/{}/{}-{}.yaml", root_directory, env.path(), squad, cur_date_time, relative_name);
+            let env = format!("{}-new-argo", env.path());
+            let path = format!("{}/tasks/{}/{}/{}-{}.yaml", root_directory, env, squad, cur_date_time, relative_name);
             self.writer.write(&path, &content);
         }
 
@@ -54,7 +55,7 @@ mod tests {
         let mut mock_writer = MockWriter::new();
         mock_writer.expect_write()
             .with(function(|x: &str| {
-                let re = Regex::new(r"root_dir/tasks/(ind-prod|ext)/my-squad/010101-download_sqs.yaml").unwrap();
+                let re = Regex::new(r"root_dir/tasks/(ind-prod|ext)-new-argo/my-squad/010101-download_sqs.yaml").unwrap();
                 re.is_match(x)
             }), always())
             .times(2)
