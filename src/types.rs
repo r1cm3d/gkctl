@@ -15,7 +15,7 @@ pub trait Time {
 
 #[derive(Debug, Parser)]
 #[clap(name = "gk-yaml - goalkeeper yaml generator")]
-#[clap(version = "0.1.0")]
+#[clap(version = "0.1.2")]
 #[clap(about = "A CLI application that helps to work with goalkeeper generating yaml files automatically.", long_about = None)]
 pub struct Cli {
     #[clap(subcommand)]
@@ -111,7 +111,7 @@ fn build_download_yaml(cur_date_time: &str, channel: &str, queue: &str) -> Strin
 kind: Workflow
 metadata:
   name: {}-download
-  namespace: goalkeeper-new
+  namespace: goalkeeper
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
@@ -161,7 +161,7 @@ fn build_reprocess_yaml(cur_date_time: &str, channel: &str, src_queue: &str, dst
 kind: Workflow
 metadata:
   name: {}-reprocess
-  namespace: goalkeeper-new
+  namespace: goalkeeper
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
@@ -211,7 +211,7 @@ fn build_purge_yaml(cur_date_time: &str, queue: &str) -> String {
 kind: Workflow
 metadata:
   name: {}-purge
-  namespace: goalkeeper-new
+  namespace: goalkeeper
 spec:
     entrypoint: wf-entrypoint
     serviceAccountName: goalkeeper
@@ -272,7 +272,7 @@ mod tests {
 kind: Workflow
 metadata:
   name: 270422-082632-download
-  namespace: goalkeeper-new
+  namespace: goalkeeper
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
@@ -341,7 +341,7 @@ spec:
 kind: Workflow
 metadata:
   name: 270422-082632-purge
-  namespace: goalkeeper-new
+  namespace: goalkeeper
 spec:
     entrypoint: wf-entrypoint
     serviceAccountName: goalkeeper
@@ -405,7 +405,7 @@ spec:
 kind: Workflow
 metadata:
   name: 270422-082632-reprocess
-  namespace: goalkeeper-new
+  namespace: goalkeeper
 spec:
   entrypoint: wf-entrypoint
   serviceAccountName: goalkeeper
