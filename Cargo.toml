@@ -1,5 +1,5 @@
 [package]
-name = "gk-yaml"
+name = "gkctl"
 version = "0.1.2"
 edition = "2021"
 
