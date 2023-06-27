@@ -14,7 +14,7 @@ pub trait Time {
 }
 
 #[derive(Debug, Parser)]
-#[clap(name = "gk-yaml - goalkeeper yaml generator")]
+#[clap(name = "gkctl - goalkeeper yaml generator")]
 #[clap(version = "0.1.2")]
 #[clap(about = "A CLI application that helps to work with goalkeeper generating yaml files automatically.", long_about = None)]
 pub struct Cli {

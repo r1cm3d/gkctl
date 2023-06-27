@@ -3,7 +3,7 @@ all: install
 build:
 	cargo build --release
 install: build
-	-rm "$(GK_BIN)/gk-yaml"
-	cp -v target/release/gk-yaml "$(GK_BIN)"
+	-rm "$(GK_BIN)/gkctl"
+	cp -v target/release/gkctl "$(GK_BIN)"
 test:
 	cargo test
